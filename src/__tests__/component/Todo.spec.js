@@ -1,5 +1,6 @@
 import { shallow } from "enzyme";
 import Todo from "../../component/Todo";
+import TodoForm from "../../component/TodoForm";
 
 import Enzyme from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
@@ -21,5 +22,11 @@ describe("Todo", () => {
   // Todo div should have todo class
   it("renders todo with class", () => {
     expect(wrapper.find("div.todo")).toHaveLength(1);
+  });
+
+  // Todo component should have todo form inside of todo div
+  it("renders todo form", () => {
+    const todoDiv = wrapper.find("div.todo");
+    expect(todoDiv.find(TodoForm)).toHaveLength(1);
   });
 });
