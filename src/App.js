@@ -1,8 +1,8 @@
 import "./App.css";
 import Todo from "./component/Todo";
 
-function App() {
+const App = () => {
   return <Todo />;
-}
+};
 
 export default App;
