@@ -1,0 +1,4 @@
+{
+    "nonGlobalStepDefinitions": true,
+    "stepDefinitions": "__tests__/acceptance/features"
+}
