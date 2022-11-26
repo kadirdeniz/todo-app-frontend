@@ -1,4 +1,4 @@
-import { shallow } from "enzyme";
+import { mount, shallow } from "enzyme";
 import Todo from "../../component/Todo";
 import TodoForm from "../../component/TodoForm";
 
@@ -35,5 +35,23 @@ describe("Todo", () => {
   it("renders todo list", () => {
     const todoDiv = wrapper.find("div.todo");
     expect(todoDiv.find(TodoList)).toHaveLength(1);
+  });
+});
+
+describe("Todo", () => {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = mount(<Todo />);
+  });
+
+  // Todo component should add todo item to todo list
+  it("adds todo item to todo list", () => {
+    const input = wrapper.find("input");
+    input.type("test");
+    const button = wrapper.find("button");
+    button.simulate("click");
+    expect(wrapper.find("li")).toHaveLength(1);
+    expect(wrapper.find("li").text()).toEqual("test");
   });
 });
