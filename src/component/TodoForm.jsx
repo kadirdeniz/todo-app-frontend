@@ -1,5 +1,9 @@
 const TodoForm = ()=>{
-    return <h1>Todo Form</h1>
+    return <form id="todo-form">
+        <label htmlFor="todo-input">Todo</label>
+        <input type="text" id="todo-input" />
+        <button type="submit">Add</button>
+    </form>
 }
 
 export default TodoForm
