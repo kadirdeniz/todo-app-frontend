@@ -5,7 +5,7 @@ import TodoList from "./TodoList";
 const Todo = () => {
   return <div className="todo" id="todo">
     <TodoForm/>
-    <TodoList/>
+    <TodoList todos={[]}/>
   </div>;
 };
 
