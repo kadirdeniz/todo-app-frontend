@@ -4,6 +4,7 @@ import TodoForm from "../../component/TodoForm";
 
 import Enzyme from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import TodoList from "../../component/TodoList";
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -28,5 +29,11 @@ describe("Todo", () => {
   it("renders todo form", () => {
     const todoDiv = wrapper.find("div.todo");
     expect(todoDiv.find(TodoForm)).toHaveLength(1);
+  });
+
+  // Todo component should have todo list inside of todo div
+  it("renders todo list", () => {
+    const todoDiv = wrapper.find("div.todo");
+    expect(todoDiv.find(TodoList)).toHaveLength(1);
   });
 });
