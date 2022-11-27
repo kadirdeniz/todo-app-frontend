@@ -19,7 +19,7 @@
     "eject": "react-scripts eject",
     "test-acceptance": "npx cypress run",
     "test-component": "react-scripts test __tests__/component --transformIgnorePatterns \"node_modules/(?!axios)/\"",
-    "test-contract": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\""
+    "test-contract": "react-scripts test __tests__/unit --transformIgnorePatterns \"node_modules/(?!axios)/\""
   },
   "eslintConfig": {
     "extends": [
