@@ -12,3 +12,12 @@ test project:
     - npm run test-component
     - npm run test-contract
 
+dockerize project:
+  stage: dockerize
+  image: docker:20.10.8
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
