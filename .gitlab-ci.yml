@@ -6,6 +6,8 @@ test project:
   stage: test
   image: node:16
   script:
+    - npm -v
+    - npm install npm@8.5.0 -g
     - npm i
     - npm run test-component
     - npm run test-contract
