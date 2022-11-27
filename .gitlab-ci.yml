@@ -2,6 +2,7 @@ stages:
   - test
   - dockerize
   - deploy2test
+  - deploy2production
 
 test project:
   stage: test
@@ -24,12 +25,23 @@ dockerize project:
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-# deploy project to test:
-#   stage: deploy2test
-#   image: docker:20.10.13
-#   services:
-#     - docker:dind
-#   script:
-#     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-#     - gem install dpl
-#     - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY
+deploy project to test:
+  stage: deploy2test
+  image: docker:20.10.13
+  services:
+    - docker:dind
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - gem install dpl
+    - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_PRODUCTION_KEY
+
+
+deploy project to production:
+  stage: deploy2production
+  image: docker:20.10.13
+  services:
+    - docker:dind
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - gem install dpl
+    - dpl --provider=heroku --app=modanisa-todo-app-production --api-key=$HEROKU_PRODUCTION_KEY
