@@ -18,7 +18,7 @@ When("I write {string} to <text box> and click to <add button>", (text) => {
   cy.get("#todo-create-button").click();
 });
 
-Then("I should see {string} in the list", (text) => {
+Then("I should see {string} item in ToDo list", (text) => {
   // Todo list should be exists
   cy.get("#todo-list").should("exist");
 

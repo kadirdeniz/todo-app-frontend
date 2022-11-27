@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
 
 const Todo = () => {
+  const [todos, setTodos] = useState([]);
   return <div className="todo" id="todo">
-    <TodoForm/>
-    <TodoList todos={[]}/>
+    <TodoForm setTodos={setTodos}/>
+    <TodoList todos={todos}/>
   </div>;
 };
 

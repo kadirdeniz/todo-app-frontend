@@ -39,19 +39,16 @@ describe("Todo", () => {
 });
 
 describe("Todo", () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = mount(<Todo />);
-  });
-
   // Todo component should add todo item to todo list
   it("adds todo item to todo list", () => {
-    const input = wrapper.find("input");
-    input.type("test");
-    const button = wrapper.find("button");
-    button.simulate("click");
-    expect(wrapper.find("li")).toHaveLength(1);
-    expect(wrapper.find("li").text()).toEqual("test");
+    const wrapper = mount(<Todo />);
+    const todoForm = wrapper.find(TodoForm);
+    const todoList = wrapper.find(TodoList);
+
+    todoForm.find("input").props().value = "test todo";
+    todoForm.find("form").simulate("submit");
+
+    expect(todoList.find("li")).toHaveLength(1);
+    expect(todoList.find("li").text()).toEqual("test todo");
   });
 });
