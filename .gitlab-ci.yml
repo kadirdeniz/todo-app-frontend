@@ -20,8 +20,6 @@ dockerize project:
   services:
     - docker:dind
   script:
-    - npm install npm@8.5.0 -g
-    - npm i
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
