@@ -5,17 +5,17 @@ const { createTodo } = require("../../api/api");
 const withRequest = {
   method: "POST",
   path: "/todo",
-  body: Matchers.like({
-    text: "test",
-  }),
+  body: {
+    text: Matchers.like("buy some milk"),
+  },
 };
 
 const willRespondWith = {
   status: 200,
-  body: Matchers.like({
-    id: "1",
-    text: "test",
-  }),
+  body: {
+    id: Matchers.like("1"),
+    text: Matchers.like("buy some milk"),
+  },
 };
 
 pactWith(
@@ -27,18 +27,20 @@ pactWith(
     describe("Todo contract test", () => {
       it("should make contract with backend server", async () => {
         await provider.addInteraction({
-          state: "a todo exists",
-          uponReceiving: "a request",
+          state: "create todo",
+          uponReceiving: "a request for create todo",
           withRequest,
           willRespondWith,
         });
-        const response = await createTodo(provider.mockService.baseUrl);
-        expect(response).toEqual(
-          Matchers.like({
-            id: "1",
-            text: "test",
-          })
+        const response = await createTodo(
+          provider.mockService.baseUrl,
+          "buy some milk"
         );
+
+        expect(response).toEqual({
+          id: "1",
+          text: "buy some milk",
+        });
       });
     });
   }

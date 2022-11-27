@@ -2,12 +2,11 @@
   "name": "todo-app",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.2.0",
+    "axios": "^1.2.0-alpha.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts": "5.0.1",
@@ -18,8 +17,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test-component": "npm test __tests__/component",
-    "test-jest": "jest"
+    "test-component": "react-scripts test __tests__/component",
+    "test-contract": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\""
   },
   "eslintConfig": {
     "extends": [
