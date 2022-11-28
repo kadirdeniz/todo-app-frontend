@@ -31,7 +31,7 @@ deploy project to test:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-    - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_PRODUCTION_KEY
+    - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_API_KEY
 
 
 deploy project to production:
@@ -43,4 +43,4 @@ deploy project to production:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-    - dpl --provider=heroku --app=modanisa-todo-app-production --api-key=$HEROKU_PRODUCTION_KEY
+    - dpl --provider=heroku --app=modanisa-todo-app-production --api-key=$HEROKU_API_KEY
