@@ -26,7 +26,7 @@ dockerize project:
 
 deploy project to test:
   stage: deploy2test
-  image: npm:8.5.0
+  image: docker:20.10.13
   services:
     - docker:dind
   script:
