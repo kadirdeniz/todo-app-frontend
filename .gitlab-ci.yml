@@ -26,12 +26,10 @@ dockerize project:
 
 deploy project to test:
   stage: deploy2test
-  image: docker:20.10.13
-  services:
-    - docker:dind
+  image: ruby:latest
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
     - gem install dpl
     - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_PRODUCTION_KEY
 
@@ -42,7 +40,7 @@ deploy project to production:
   services:
     - docker:dind
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
     - gem install dpl
     - dpl --provider=heroku --app=modanisa-todo-app-production --api-key=$HEROKU_PRODUCTION_KEY
