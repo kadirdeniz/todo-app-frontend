@@ -20,6 +20,7 @@ dockerize project:
   services:
     - docker:dind
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
@@ -29,6 +30,7 @@ deploy project to test:
   services:
     - docker:dind
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - gem install dpl
     - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_PRODUCTION_KEY
@@ -40,6 +42,7 @@ deploy project to production:
   services:
     - docker:dind
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - gem install dpl
     - dpl --provider=heroku --app=modanisa-todo-app-production --api-key=$HEROKU_PRODUCTION_KEY
