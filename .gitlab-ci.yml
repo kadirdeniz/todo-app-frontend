@@ -23,7 +23,7 @@ publish pact broker:
   variables:
     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
   script:
-    - pact create-or-update-pacticipant pact/pacts 
+    - pact publish pact/pacts 
         --consumer-app-version=$CI_COMMIT_SHORT_SHA 
         --tag=$CI_COMMIT_REF_NAME 
         --broker-base-url=$PACT_BROKER_BASE_URL 
