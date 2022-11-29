@@ -38,17 +38,3 @@ describe("Todo", () => {
   });
 });
 
-// describe("Todo", () => {
-//   // Todo component should add todo item to todo list
-//   it("adds todo item to todo list", () => {
-//     const wrapper = mount(<Todo />);
-//     const todoForm = wrapper.find(TodoForm);
-//     const todoList = wrapper.find(TodoList);
-
-//     todoForm.find("input").props().value = "test todo";
-//     todoForm.find("form").simulate("submit");
-
-//     expect(todoList.find("li")).toHaveLength(1);
-//     expect(todoList.find("li").text()).toEqual("test todo");
-//   });
-// });
