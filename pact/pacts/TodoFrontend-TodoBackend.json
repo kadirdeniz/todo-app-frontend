@@ -19,7 +19,7 @@
           }
         },
         "method": "POST",
-        "path": "/todo"
+        "path": "/todos"
       },
       "response": {
         "body": {

@@ -4,7 +4,7 @@ const { createTodo } = require("../../api/api");
 
 const withRequest = {
   method: "POST",
-  path: "/todo",
+  path: "/todos",
   body: {
     text: Matchers.like("buy some milk"),
   },
