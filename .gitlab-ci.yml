@@ -1,19 +1,19 @@
 stages:
-  # - test
+  - test
   - pact-publish
   - dockerize
   - deploy2test
   - deploy2production
 
-# test project:
-#   stage: test
-#   image: node:16
-#   script:
-#     - npm -v
-#     - npm install npm@8.5.0 -g
-#     - npm i
-#     - npm run test-component
-#     - npm run test-contract
+test project:
+  stage: test
+  image: node:16
+  script:
+    - npm -v
+    - npm install npm@8.5.0 -g
+    - npm i
+    - npm run test-component
+    - npm run test-contract
 
 publish pact broker:
   stage: pact-publish
@@ -44,11 +44,9 @@ deploy project to test:
   stage: deploy2test
   image: ruby:latest
   script:
-    - apt-get update -qy
-    - apt-get install -y ruby-dev
-    - gem install dpl
-    - dpl --provider=heroku --app=modanisa-todo-app-test --api-key=$HEROKU_API_KEY
-
+    - docker login --email=_ --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/todo-frontend:latest
+    - docker push registry.heroku.com/todo-frontend:latest
 
 deploy project to production:
   stage: deploy2production
