@@ -1,5 +1,6 @@
 stages:
   - test
+  - pact-publish
   - dockerize
   - deploy2test
   - deploy2production
@@ -13,6 +14,18 @@ test project:
     - npm i
     - npm run test-component
     - npm run test-contract
+
+publish pact broker:
+  stage: pact-publish
+  image:
+    name: pactfoundation/pact-cli:latest
+    entrypoint: [""]
+  script:
+    - pact publish pact/pacts 
+        --consumer-app-version=$CI_COMMIT_SHORT_SHA 
+        --tag=$CI_COMMIT_REF_NAME 
+        --broker-base-url=$PACT_BROKER_BASE_URL 
+        --broker-token=$PACT_BROKER_TOKEN
 
 dockerize project:
   stage: dockerize
