@@ -23,7 +23,8 @@ publish pact broker:
   variables:
     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
   script:
-    - pact publish pact/pacts 
+    - pact-broker create-or-update-pacticipant pact/pacts 
+        --name "TodoFrontend"
         --consumer-app-version=$CI_COMMIT_SHORT_SHA 
         --tag=$CI_COMMIT_REF_NAME 
         --broker-base-url=$PACT_BROKER_BASE_URL 
