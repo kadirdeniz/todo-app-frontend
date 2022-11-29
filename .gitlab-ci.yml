@@ -21,6 +21,7 @@ publish pact broker:
     name: pactfoundation/pact-cli:latest
     entrypoint: [""]
   script:
+    - broker help
     - pact create-or-update-pacticipant pact/pacts 
         --consumer-app-version=$CI_COMMIT_SHORT_SHA 
         --tag=$CI_COMMIT_REF_NAME 
