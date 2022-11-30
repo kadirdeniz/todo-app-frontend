@@ -36,7 +36,7 @@ dockerize project:
   services:
     - docker:dind
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.heroku.com
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
@@ -46,7 +46,7 @@ deploy2test:
   services:
     - docker:dind
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.heroku.com
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/todo-app-frontend-test/web
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
@@ -58,7 +58,7 @@ deploy2production:
   services:
     - docker:dind
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.heroku.com
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/todo-app-frontend-production/web
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
