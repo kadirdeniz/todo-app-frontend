@@ -39,6 +39,7 @@ dockerize:
   script:
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
 
 # Deploy the dockerized application to heroku test envirounment
@@ -51,6 +52,7 @@ deploy2test:
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
     - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web:latest
     - heroku container:release web --app $HEROKU_APP_NAME-test
 
@@ -64,5 +66,6 @@ deploy2production:
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
     - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-production/web
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-production/web:latest
     - heroku container:release web --app $HEROKU_APP_NAME-production
