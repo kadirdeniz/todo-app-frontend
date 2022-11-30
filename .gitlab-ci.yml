@@ -56,6 +56,6 @@ deploy project to production:
   services:
     - docker:dind
   script:
-    - docker login --email=_ --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/modanisa-todo-app-production:latest
     - docker push registry.heroku.com/todo-frontend:latest
