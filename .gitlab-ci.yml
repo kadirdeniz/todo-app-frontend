@@ -36,19 +36,21 @@ dockerize project:
   services:
     - docker:dind
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.heroku.com
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-deploy project to test:
+deploy2test:
   stage: deploy2test
   image: docker:20.10.13
   services:
     - docker:dind
   script:
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/modanisa-todo-app-test:latest
-    - docker push registry.heroku.com/todo-frontend:latest
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.heroku.com
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME/web
+    - docker push registry.heroku.com/$HEROKU_APP_NAME/web
+    - heroku container:release web --app $HEROKU_APP_NAME
 
 deploy project to production:
   stage: deploy2production
@@ -57,5 +59,4 @@ deploy project to production:
     - docker:dind
   script:
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/modanisa-todo-app-production:latest
-    - docker push registry.heroku.com/todo-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
