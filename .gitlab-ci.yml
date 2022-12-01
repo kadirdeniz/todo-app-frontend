@@ -1,35 +1,35 @@
 stages:
-  # - test
-  # - pact-publish
+  - test
+  - pact-publish
   - dockerize
   - deploy2test
   - deploy2production
 
 
-# test project:
-#   stage: test
-#   image: node:16
-#   script:
-#     - npm -v
-#     - npm install npm@8.5.0 -g
-#     - npm i
-#     - npm run test-component
-#     - npm run test-contract
+test project:
+  stage: test
+  image: node:16
+  script:
+    - npm -v
+    - npm install npm@8.5.0 -g
+    - npm i
+    - npm run test-component
+    - npm run test-contract
 
-# publish pact broker:
-#   stage: pact-publish
-#   image:
-#     name: pactfoundation/pact-cli:latest
-#     entrypoint: [""]
-#   variables:
-#     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
-#   script:
-#     - pact-broker create-or-update-pacticipant pact/pacts 
-#         --name "TodoFrontend"
-#         --consumer-app-version=$CI_COMMIT_SHORT_SHA 
-#         --tag=$CI_COMMIT_REF_NAME 
-#         --broker-base-url=$PACT_BROKER_BASE_URL 
-#         --broker-token=$PACT_BROKER_TOKEN
+publish pact broker:
+  stage: pact-publish
+  image:
+    name: pactfoundation/pact-cli:latest
+    entrypoint: [""]
+  variables:
+    PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
+  script:
+    - pact-broker create-or-update-pacticipant pact/pacts 
+        --name "TodoFrontend"
+        --consumer-app-version=$CI_COMMIT_SHORT_SHA 
+        --tag=$CI_COMMIT_REF_NAME 
+        --broker-base-url=$PACT_BROKER_BASE_URL 
+        --broker-token=$PACT_BROKER_TOKEN
 
 # Dockerize the application and push the aws ecr registry
 dockerize:
