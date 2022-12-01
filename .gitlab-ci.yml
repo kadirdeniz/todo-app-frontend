@@ -5,6 +5,7 @@ stages:
   - deploy2test
   - deploy2production
 
+
 # test project:
 #   stage: test
 #   image: node:16
@@ -33,15 +34,23 @@ stages:
 # Dockerize the application and push the heroku container registry
 dockerize:
   stage: dockerize
-  image: docker:latest
-  services:
-    - docker:dind
   script:
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker push registry.heroku.com/$HEROKU_APP_NAME/web:latest
-
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_DEFAULT_REGION
+    - $(aws ecr get-login --no-include-email --region "${AWS_DEFAULT_REGION}")
+    - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
+    - echo "Building image..."
+    - docker build -t $AWS_REPOSITORY_URL:latest .
+    - echo "Tagging image..."
+    - docker tag $AWS_REPOSITORY_URL:latest $AWS_REPOSITORY_URL:$IMAGE_TAG
+    - echo "Pushing image..."
+    - docker push $AWS_REPOSITORY_URL:latest
+    - docker push $AWS_REPOSITORY_URL:$IMAGE_TAG
+  only:
+  - main
 # Deploy the dockerized application to heroku test envirounment
 deploy2test:
   stage: deploy2test
@@ -49,12 +58,23 @@ deploy2test:
   services:
     - docker:dind
   script:
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
-    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web:latest
-    - heroku container:release web --app $HEROKU_APP_NAME-test
+    - apk add --no-cache curl jq python py-pip
+    - pip install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_DEFAULT_REGION
+    - $(aws ecr get-login --no-include-email --region "${AWS_DEFAULT_REGION}")
+    - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
+
+    - echo $AWS_REPOSITORY_URL:$IMAGE_TAG
+    - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_DEFINITION_NAME" --region "${AWS_DEFAULT_REGION}")
+    - NEW_CONTAINER_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$AWS_REPOSITORY_URL:$IMAGE_TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE | .taskDefinition.containerDefinitions[0]')
+    - echo "Registering new container definition..."
+    - aws ecs register-task-definition --region "${AWS_DEFAULT_REGION}" --family "${TASK_DEFINITION_NAME}" --container-definitions "${NEW_CONTAINER_DEFINTIION}"
+    - echo "Updating the service..."
+    - aws ecs update-service --region "${AWS_DEFAULT_REGION}" --cluster "${CLUSTER_NAME}" --service "${SERVICE_NAME}"  --task-definition "${TASK_DEFINITION_NAME}"
+  only:
+    - master
 
 # Deploy the dockerized application to heroku production envirounment
 deploy2production:
