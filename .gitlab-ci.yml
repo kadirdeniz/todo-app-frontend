@@ -43,7 +43,7 @@ dockerize:
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
-    - amazon-linux-extras install docker
+    - apk add --no-cache docker-cli
   script:
     - docker build -t $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA .
     - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ECR_REGISTRY
