@@ -74,7 +74,7 @@ deploy2test:
     - echo "Updating the service..."
     - aws ecs update-service --region "${AWS_DEFAULT_REGION}" --cluster "${CLUSTER_NAME}" --service "${SERVICE_NAME}"  --task-definition "${TASK_DEFINITION_NAME}"
   only:
-    - master
+    - main
 
 # Deploy the dockerized application to heroku production envirounment
 deploy2production:
