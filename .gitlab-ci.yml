@@ -42,9 +42,9 @@ dockerize:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
   script:
+    - docker build -t $AWS_ECR_REGISTRY:$CI_PIPELINE_IID .
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-    - docker build -t $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID .
-    - docker push $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID
+    - docker push $AWS_ECR_REGISTRY:$CI_PIPELINE_IID
 
 # Deploy the docker image to aws ecs test envirounment
 deploy2test:
