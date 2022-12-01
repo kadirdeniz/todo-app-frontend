@@ -42,7 +42,8 @@ dockerize:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
   script:
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_REGISTRY
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCESS_KEY_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_SECRET_ACCESS_KEY.dkr.ecr.$AWS_REGION.amazonaws.com
     - docker build -t $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID .
     - docker push $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID
 
