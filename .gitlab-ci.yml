@@ -31,27 +31,16 @@ stages:
 #         --broker-base-url=$PACT_BROKER_BASE_URL 
 #         --broker-token=$PACT_BROKER_TOKEN
 
-# Dockerize the application and push the heroku container registry
+# Dockerize the application and push the aws ecr registry
 dockerize:
   stage: dockerize
   image: docker:latest
   services:
     - docker:dind
   script:
-    - apk add --no-cache curl jq python3 py3-pip
-    - pip install awscli
-    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-    - aws configure set region $AWS_DEFAULT_REGION
-    - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
-    - echo "Building image..."
-    - docker build -t $AWS_REPOSITORY_URL:latest .
-    - echo "Tagging image..."
-    - docker tag $AWS_REPOSITORY_URL:latest $AWS_REPOSITORY_URL:$IMAGE_TAG
-    - echo "Pushing image..."
-    - $(aws ecr get-login --no-include-email --region "${AWS_DEFAULT_REGION}")
-    - docker push $AWS_REPOSITORY_URL:latest
-    - docker push $AWS_REPOSITORY_URL:$IMAGE_TAG
+    - docker build -t $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker login -u $AWS_ACCESS_KEY_ID -p $AWS_SECRET_ACCESS_KEY $AWS_ECR_REGISTRY
+    - docker push $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
   only:
   - main
 # Deploy the dockerized application to heroku test envirounment
