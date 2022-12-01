@@ -35,24 +35,19 @@ stages:
 dockerize:
   stage: dockerize
   image: 
-    name: amazon/aws-cli
-    entrypoint: [""]
+    name: docker:latest
   services:
     - docker:19-dind
   before_script:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - aws --version
     - docker info
     - docker --version
   script:
-    - docker build -t $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA .
-    - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_REGION) $AWS_ECR_REGISTRY
-    - docker push $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
-
     - docker build -t $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID .
-    - docker push $DOCKER_REGISTRY/todo-app:$CI_PIPELINE_IID
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ECR_REGISTRY
+    - docker push $AWS_ECR_REGISTRY/todo-app:$CI_PIPELINE_IID
 
 # Deploy the docker image to aws ecs test envirounment
 deploy2test:
