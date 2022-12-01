@@ -38,8 +38,7 @@ dockerize:
   services:
     - docker:dind
   script:
-    - apk add python3
-    - apk add --no-cache curl jq python py-pip
+    - apk add --no-cache curl jq python3 apk add py3-pip
     - pip install awscli
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
@@ -62,8 +61,7 @@ deploy2test:
   services:
     - docker:dind
   script:
-    - apk add python3
-    - apk add --no-cache curl jq python py-pip
+    - apk add --no-cache curl jq python3 apk add py3-pip
     - pip install awscli
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
