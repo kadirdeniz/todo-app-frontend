@@ -34,50 +34,27 @@ stages:
 # Dockerize the application and push the aws ecr registry
 dockerize:
   stage: dockerize
-  image: docker:latest
+  image: 
+    name: amazon/aws-cli
+    entrypoint: [""]
   services:
     - docker:dind
   script:
     - docker build -t $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA .
     - docker login -u $AWS_ACCESS_KEY_ID -p $AWS_SECRET_ACCESS_KEY $AWS_ECR_REGISTRY
     - docker push $AWS_ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
-  only:
-  - main
-# Deploy the dockerized application to heroku test envirounment
+
+# Deploy the docker image to aws ecs test envirounment
 deploy2test:
   stage: deploy2test
-  image: docker:latest
-  services:
-    - docker:dind
+  image: amazon/aws-cli:latest
   script:
-    - apk add --no-cache curl jq python3 py3-pip
-    - pip install awscli
-    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-    - aws configure set region $AWS_DEFAULT_REGION
-    - $(aws ecr get-login --no-include-email --region "${AWS_DEFAULT_REGION}")
-    - IMAGE_TAG="$(echo $CI_COMMIT_SHA | head -c 8)"
+    - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME_TEST --force-new-deployment --region $AWS_REGION
 
-    - echo $AWS_REPOSITORY_URL:$IMAGE_TAG
-    - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_DEFINITION_NAME" --region "${AWS_DEFAULT_REGION}")
-    - NEW_CONTAINER_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$AWS_REPOSITORY_URL:$IMAGE_TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE | .taskDefinition.containerDefinitions[0]')
-    - echo "Registering new container definition..."
-    - aws ecs register-task-definition --region "${AWS_DEFAULT_REGION}" --family "${TASK_DEFINITION_NAME}" --container-definitions "${NEW_CONTAINER_DEFINTIION}"
-    - echo "Updating the service..."
-    - aws ecs update-service --region "${AWS_DEFAULT_REGION}" --cluster "${CLUSTER_NAME}" --service "${SERVICE_NAME}"  --task-definition "${TASK_DEFINITION_NAME}"
-  only:
-    - main
 
-# Deploy the dockerized application to heroku production envirounment
+# Deploy the docker image to aws ecs production envirounment
 deploy2production:
   stage: deploy2production
-  image: docker:latest
-  services:
-    - docker:dind
+  image: amazon/aws-cli:latest
   script:
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
-    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-production/web
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-production/web:latest
-    - heroku container:release web --app $HEROKU_APP_NAME-production
+    - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME_PRODUCTION --force-new-deployment --region $AWS_REGION
