@@ -36,6 +36,7 @@ deploy to test:
     - docker:dind
   script:
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - heroku container:login
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
     - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-test/web
     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
@@ -49,6 +50,7 @@ deploy to production:
     - docker:dind
   script:
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - heroku container:login
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
     - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-prod/web
     - docker push registry.heroku.com/$HEROKU_APP_NAME-prod/web 
