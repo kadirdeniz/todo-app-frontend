@@ -23,6 +23,7 @@ dockerize project:
   services:
     - docker:dind
   script:
+    - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - heroku container:login
     - docker build --platform linux/amd64 -t registry.heroku.com/$HEROKU_APP_NAME/web .
@@ -35,6 +36,7 @@ deploy to test:
   services:
     - docker:dind
   script:
+    - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - heroku container:login
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
@@ -49,6 +51,7 @@ deploy to production:
   services:
     - docker:dind
   script:
+    - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
     - heroku container:login
     - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
