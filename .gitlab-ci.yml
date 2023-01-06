@@ -16,7 +16,7 @@ test project:
     - npm run test-component
     - npm run test-contract
 
-# dockerize project and push to heroku registry
+# dockerize project and push to heroku registryy
 dockerize project:
   stage: dockerize
   image: docker:latest
