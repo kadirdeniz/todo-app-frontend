@@ -1,6 +1,3 @@
-variables:
-  
-
 stages:
   - test
   - pact-publish
