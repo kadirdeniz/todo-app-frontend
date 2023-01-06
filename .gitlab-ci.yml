@@ -24,7 +24,7 @@ dockerize project:
     - docker:dind
   script:
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
-    - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+    - docker build --platform linux/amd64 -t registry.heroku.com/$HEROKU_APP_NAME/web .
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
 
 # deploy to heroku test environment
