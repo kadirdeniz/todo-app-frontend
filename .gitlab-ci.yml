@@ -23,7 +23,7 @@ dockerize:
     - docker:dind
   before_script:
     # login to heroku container registry
-    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - docker login registry.heroku.com -u _ -p $HEROKU_API_KEY
   script:
     - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
