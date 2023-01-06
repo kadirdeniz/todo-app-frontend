@@ -1,3 +1,6 @@
+variables:
+  
+
 stages:
   - test
   - pact-publish
@@ -16,48 +19,39 @@ test project:
     - npm run test-component
     - npm run test-contract
 
-publish pact broker:
-  stage: pact-publish
-  image:
-    name: pactfoundation/pact-cli:latest
-    entrypoint: [""]
-  variables:
-    PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
-  script:
-    - pact-broker create-or-update-pacticipant pact/pacts 
-        --name "TodoFrontend"
-        --consumer-app-version=$CI_COMMIT_SHORT_SHA 
-        --tag=$CI_COMMIT_REF_NAME 
-        --broker-base-url=$PACT_BROKER_BASE_URL 
-        --broker-token=$PACT_BROKER_TOKEN
-
-# Dockerize the application and push the aws ecr registry
-dockerize:
+# dockerize project and push to heroku registry
+dockerize project:
   stage: dockerize
-  image: 
-    name: docker:latest
+  image: docker:latest
   services:
-    - docker:19-dind
-  before_script:
-    - apk add --no-cache curl jq python3 py3-pip
-    - pip install awscli
+    - docker:dind
   script:
-    - docker build -t $AWS_ECR_REGISTRY:$CI_PIPELINE_IID .
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-    - docker tag $AWS_ECR_REGISTRY:$CI_PIPELINE_IID $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REGISTRY:latest
-    - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REGISTRY:latest
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+    - docker push registry.heroku.com/$HEROKU_APP_NAME/web
 
-# Deploy the docker image to aws ecs test envirounment
-deploy2test:
+# deploy to heroku test environment
+deploy to test:
   stage: deploy2test
-  image: amazon/aws-cli:latest
+  image: docker:latest
+  services:
+    - docker:dind
   script:
-    - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME_TEST --force-new-deployment --region $AWS_REGION
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
+    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - heroku container:release web -a $HEROKU_APP_NAME-test
 
-
-# Deploy the docker image to aws ecs production envirounment
-deploy2production:
+# deploy to heroku production environment
+deploy to production:
   stage: deploy2production
-  image: amazon/aws-cli:latest
+  image: docker:latest
+  services:
+    - docker:dind
   script:
-    - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME_PRODUCTION --force-new-deployment --region $AWS_REGION
+    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
+    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
+    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-prod/web
+    - docker push registry.heroku.com/$HEROKU_APP_NAME-prod/web 
+    - heroku container:release web -a $HEROKU_APP_NAME-prod
