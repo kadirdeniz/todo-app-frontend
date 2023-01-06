@@ -23,7 +23,7 @@ dockerize project:
   services:
     - docker:dind
   script:
-    - sudo apt-get update; sudo apt-get install heroku-toolbelt heroku
+    - apt-get update; sudo apt-get install heroku-toolbelt heroku
     - apk add --no-cache curl
     - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
     - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
