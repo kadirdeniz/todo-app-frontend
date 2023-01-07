@@ -16,20 +16,17 @@ stages:
 #     - npm run test-component
 #     - npm run test-contract
 
+#dockerize and push to gitlab registry
 dockerize:
   stage: dockerize
   image: docker:latest
   services:
     - docker:dind
-  before_script:
-    # login to heroku container registry
-    - docker login registry.heroku.com -u _ -p $HEROKU_API_KEY
   script:
-    - docker build -t registry.heroku.com/$HEROKU_APP_NAME-test/web .
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
     
-    
-
 # deploy to heroku test environment
 deploy to test:
   stage: deploy2test
