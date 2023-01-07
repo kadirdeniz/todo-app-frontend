@@ -5,31 +5,30 @@ stages:
   - deploy2test
   - deploy2production
 
+test project:
+  stage: test
+  image: node:16
+  script:
+    - npm -v
+    - npm install npm@8.5.0 -g
+    - npm i
+    - npm run test-component
+    - npm run test-contract
 
-# test project:
-#   stage: test
-#   image: node:16
-#   script:
-#     - npm -v
-#     - npm install npm@8.5.0 -g
-#     - npm i
-#     - npm run test-component
-#     - npm run test-contract
-
-# #dockerize and push to gitlab registry
-# dockerize:
-#   stage: dockerize
-#   image: docker:latest
-#   services:
-#     - docker:dind
-#   before_script:
-#     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
-#   script:
-#     - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
-#     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
+#dockerize and push to gitlab registry
+dockerize:
+  stage: dockerize
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
+  script:
+    - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
     
 
-# publish pact to pact brokerr
+# publish pact to pact broker
 publish pact broker:
   stage: pact-publish
   image:
