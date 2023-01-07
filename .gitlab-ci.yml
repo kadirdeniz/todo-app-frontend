@@ -60,7 +60,7 @@ deploy to test:
     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
     - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a $HEROKU_APP_NAME-test
 
-# pact can i deploy to prod
+# pact can i deploy to production
 can_i_deploy:
   stage: can_i_deploy
   image:
