@@ -29,7 +29,7 @@ stages:
 #     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
     
 
-# publish pact to pact broker
+# publish pact to pact brokerr
 publish pact broker:
   stage: pact-publish
   image:
