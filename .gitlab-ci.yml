@@ -39,9 +39,9 @@ deploy to test:
   script:
     - echo $CI_REGISTRY_IMAGE
     # pull the image from gitlab registry
-    - docker pull $CI_REGISTRY_IMAGE
+    - docker pull $CI_REGISTRY_IMAGE:242f719
     # - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
-    - docker tag $CI_REGISTRY_IMAGE registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker tag $CI_REGISTRY_IMAGE:242f719 registry.heroku.com/$HEROKU_APP_NAME-test/web
     # push to image to heroku registry
     - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push web --app registry.heroku.com/$HEROKU_APP_NAME-test/web
     # release the image to heroku
