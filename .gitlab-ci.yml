@@ -40,8 +40,9 @@ deploy to test:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     # - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push web --app registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
+    # - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push --app registry.heroku.com/$HEROKU_APP_NAME-test/web web 
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release --app registry.heroku.com/$HEROKU_APP_NAME-test/web web
 
 # deploy to heroku production environment
 deploy to production:
