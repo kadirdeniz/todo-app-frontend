@@ -42,8 +42,7 @@ deploy to test:
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push --app registry.heroku.com/$HEROKU_APP_NAME-test/web web 
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release --app registry.heroku.com/$HEROKU_APP_NAME-test/web web
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a todo-app-frontend-test
 
 # deploy to heroku production environment
 deploy to production:
@@ -59,5 +58,4 @@ deploy to production:
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME/web
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push --app registry.heroku.com/$HEROKU_APP_NAME/web web 
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release --app registry.heroku.com/$HEROKU_APP_NAME/web web
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a todo-app-frontend
