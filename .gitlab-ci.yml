@@ -22,8 +22,9 @@ dockerize:
   image: docker:latest
   services:
     - docker:dind
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
   script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
     
@@ -33,12 +34,12 @@ deploy to test:
   image: docker:latest
   services:
     - docker:dind
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
   script:
-    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
-    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
-    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app $HEROKU_APP_NAME-test
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
+    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app registry.heroku.com/$HEROKU_APP_NAME-test/web
 
 # deploy to heroku production environment
 deploy to production:
@@ -46,11 +47,9 @@ deploy to production:
   image: docker:latest
   services:
     - docker:dind
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-    - docker login -u _ -p $HEROKU_API_KEY registry.heroku.com
-    - heroku container:login
-    - docker pull registry.heroku.com/$HEROKU_APP_NAME/web
-    - docker tag registry.heroku.com/$HEROKU_APP_NAME/web registry.heroku.com/$HEROKU_APP_NAME-prod/web
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-prod/web 
-    - heroku container:release web -a $HEROKU_APP_NAME-prod
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-production/web
+    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app registry.heroku.com/$HEROKU_APP_NAME-production/web
