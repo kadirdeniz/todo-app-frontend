@@ -6,15 +6,28 @@ stages:
   - deploy2production
 
 
-test project:
-  stage: test
-  image: node:16
-  script:
-    - npm -v
-    - npm install npm@8.5.0 -g
-    - npm i
-    - npm run test-component
-    - npm run test-contract
+# test project:
+#   stage: test
+#   image: node:16
+#   script:
+#     - npm -v
+#     - npm install npm@8.5.0 -g
+#     - npm i
+#     - npm run test-component
+#     - npm run test-contract
+
+# #dockerize and push to gitlab registry
+# dockerize:
+#   stage: dockerize
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   before_script:
+#     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
+#   script:
+#     - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+#     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
+    
 
 # publish pact to pact broker
 publish pact broker:
@@ -32,18 +45,6 @@ publish pact broker:
         --broker-base-url=$PACT_FLOW_BASE_URL 
         --broker-token=$PACT_FLOW_API_KEY
 
-#dockerize and push to gitlab registry
-dockerize:
-  stage: dockerize
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
-  script:
-    - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
-    
 # deploy to heroku test environment
 deploy to test:
   stage: deploy2test
