@@ -54,6 +54,11 @@ deploy to production:
   before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-production/web
-    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app registry.heroku.com/$HEROKU_APP_NAME-production/web
+    - docker pull $CI_REGISTRY_IMAGE
+    # - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
+    - docker tag $CI_REGISTRY_IMAGE registry.heroku.com/$HEROKU_APP_NAME/web
+    # push to image to heroku registry
+    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:push web --app registry.heroku.com/$HEROKU_APP_NAME/web
+    # release the image to heroku
+    - docker run --rm  -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web --app registry.heroku.com/$HEROKU_APP_NAME/web
+    
