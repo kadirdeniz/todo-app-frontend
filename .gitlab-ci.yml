@@ -26,7 +26,7 @@ publish pact broker:
     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
   script:
     - pact-broker create-or-update-pacticipant pact/pacts 
-        --name "TodoFrontend"
+        --name "Todo Frontend"
         --consumer-app-version=$CI_COMMIT_SHORT_SHA 
         --tag=$CI_COMMIT_REF_NAME 
         --broker-base-url=$PACT_FLOW_BASE_URL 
