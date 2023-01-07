@@ -39,7 +39,6 @@ publish pact broker:
     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
   script:
     - pact-broker publish pact/pacts/TodoFrontend-TodoBackend.json
-        --name "TodoFrontend"
         --consumer-app-version=1.0.0
         --tag=$CI_COMMIT_REF_NAME 
         --broker-base-url=$PACT_FLOW_BASE_URL 
