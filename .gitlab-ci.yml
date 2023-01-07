@@ -1,7 +1,7 @@
 stages:
   - test
   - dockerize
-  - publish_pact
+  - pact-publish
   - deploy2test
   - deploy2production
 
