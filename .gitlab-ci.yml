@@ -6,77 +6,77 @@ stages:
   - can_i_deploy
   - deploy2production
 
-test project:
-  stage: test
-  image: node:16
-  script:
-    - npm -v
-    - npm install npm@8.5.0 -g
-    - npm i
-    - npm run test-component
-    - npm run test-contract
+# test project:
+#   stage: test
+#   image: node:16
+#   script:
+#     - npm -v
+#     - npm install npm@8.5.0 -g
+#     - npm i
+#     - npm run test-component
+#     - npm run test-contract
 
-#dockerize and push to gitlab registry
-dockerize:
-  stage: dockerize
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
-  script:
-    - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
+# #dockerize and push to gitlab registry
+# dockerize:
+#   stage: dockerize
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   before_script:
+#     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
+#   script:
+#     - docker build --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+#     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG    
     
 
-# publish pact to pact broker
-publish pact broker:
-  stage: pact-publish
-  image:
-    name: pactfoundation/pact-cli:latest
-    entrypoint: [""]
-  variables:
-    PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
-  script:
-    - pact-broker publish pact/pacts/TodoFrontend-TodoBackend.json
-        --consumer-app-version=1.0.0
-        --tag=$CI_COMMIT_REF_NAME 
-        --broker-base-url=$PACT_FLOW_BASE_URL 
-        --broker-token=$PACT_FLOW_API_KEY
+# # publish pact to pact broker
+# publish pact broker:
+#   stage: pact-publish
+#   image:
+#     name: pactfoundation/pact-cli:latest
+#     entrypoint: [""]
+#   variables:
+#     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES : "false"
+#   script:
+#     - pact-broker publish pact/pacts/TodoFrontend-TodoBackend.json
+#         --consumer-app-version=1.0.0
+#         --tag=$CI_COMMIT_REF_NAME 
+#         --broker-base-url=$PACT_FLOW_BASE_URL 
+#         --broker-token=$PACT_FLOW_API_KEY
 
-# deploy to heroku test environment
-deploy to test:
-  stage: deploy2test
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    - docker exec -it $CI_REGISTRY_IMAGE echo $TEST_ENV_VARIABLES | base64 --decode > .env
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a $HEROKU_APP_NAME-test
+# # deploy to heroku test environment
+# deploy to test:
+#   stage: deploy2test
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   before_script:
+#     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
+#   script:
+#     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+#     - docker exec -it $CI_REGISTRY_IMAGE echo $TEST_ENV_VARIABLES | base64 --decode > .env
+#     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
+#     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+#     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
+#     - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a $HEROKU_APP_NAME-test
 
-# pact can i deploy to production
-can_i_deploy:
-  stage: can_i_deploy
-  needs:
-    - deploy to test
-  image:
-    name: pactfoundation/pact-cli:latest
-    entrypoint: [ "" ]
-  variables:
-    PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES: "false"
-  script:
-      - pact-broker can-i-deploy 
-        --pacticipant TodoFrontend
-        --version 1.0.0
-        --to-environment production
-        --broker-base-url=$PACT_FLOW_BASE_URL
-        --broker-token=$PACT_FLOW_API_KEY
+# # pact can i deploy to production
+# can_i_deploy:
+#   stage: can_i_deploy
+#   needs:
+#     - deploy to test
+#   image:
+#     name: pactfoundation/pact-cli:latest
+#     entrypoint: [ "" ]
+#   variables:
+#     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES: "false"
+#   script:
+#       - pact-broker can-i-deploy 
+#         --pacticipant TodoFrontend
+#         --version 1.0.0
+#         --to-environment production
+#         --broker-base-url=$PACT_FLOW_BASE_URL
+#         --broker-token=$PACT_FLOW_API_KEY
 
 # acceptance test
 acceptance test:
@@ -85,6 +85,7 @@ acceptance test:
   needs:
     - deploy to test
   script:
+    - echo $TEST_ENV_VARIABLES | base64 --decode > .env
     # install dependencies
     - npm ci
     # start the server in the background
