@@ -1,13 +1,11 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps";
 
-import dotenv from "dotenv";
-dotenv.config();
-
-const baseUrL = process.env.BASE_URL || "http://localhost:3000";
+const dotenv = require("dotenv");
+const result = dotenv.config();
 
 Given("Empty ToDo list", () => {
   // Open the app
-  cy.visit(baseUrL);
+  cy.visit("/");
 
   // Firstly todo list should be empty
   cy.get("#todo-list").should("not.exist");
