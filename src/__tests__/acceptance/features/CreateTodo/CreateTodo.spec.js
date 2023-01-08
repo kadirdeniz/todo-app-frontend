@@ -1,6 +1,6 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps";
 
-const baseUrL = "http://localhost:3000/";
+const baseUrL = process.env.BASE_URL || "http://localhost:3000";
 
 Given("Empty ToDo list", () => {
   // Open the app

@@ -54,7 +54,7 @@ deploy to test:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin 
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    # - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
+    - docker exec -it $CI_REGISTRY_IMAGE bash echo $TEST_ENV_VARIABLES | base64 --decode > .env
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-test/web
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-test/web
@@ -81,12 +81,16 @@ can_i_deploy:
 # acceptance test
 acceptance test:
   stage: can_i_deploy
-  image: node:16
+  image: docker:latest
+  services:
+    - docker:dind
   needs:
     - deploy to test
   script:
-    - npm -v
-    - npm install
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker exec -it $CI_REGISTRY_IMAGE bash echo $TEST_ENV_VARIABLES | base64 --decode > .env
+    - docker run -d -p 3000:3000 --env-file .env $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker exec -it $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG bash npm run test-acceptance
 
 # deploy to heroku production environment
 deploy to production:
@@ -98,7 +102,7 @@ deploy to production:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    # - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
+    - docker exec -it $CI_REGISTRY_IMAGE bash echo $PROD_ENV_VARIABLES | base64 --decode > .env
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-prod/web
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-prod/web
