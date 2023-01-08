@@ -72,9 +72,9 @@ can_i_deploy:
     PACT_BROKER_CHECK_FOR_POTENTIAL_DUPLICATE_PACTICIPANT_NAMES: "false"
   script:
       - pact-broker can-i-deploy 
-        --pacticipant TodoFrontend
-        --version 1.0.0
-        --to-environment production
+        --pacticipant=TodoFrontend --version=1.0.0
+        --pacticipant=TodoBackend --version=1.0.0
+        --to-environment=production
         --broker-base-url=$PACT_FLOW_BASE_URL
         --broker-token=$PACT_FLOW_API_KEY
 
