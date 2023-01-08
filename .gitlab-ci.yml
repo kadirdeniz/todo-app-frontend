@@ -90,7 +90,7 @@ acceptance test:
     # start the server in the background
     - npm run start:ci &
     # run Cypress tests
-    - CYPRESS_BASE_URL=https://todo-app-frontend-test.herokuapp.com/ npx cypress run --browser chrome
+    - CYPRESS_BASE_URL=https://todo-app-frontend-test.herokuapp.com npx cypress run --browser chrome
 
 # deploy to heroku production environment
 deploy to production:
@@ -105,5 +105,5 @@ deploy to production:
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG registry.heroku.com/$HEROKU_APP_NAME-prod/web
     - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     - docker push registry.heroku.com/$HEROKU_APP_NAME-prod/web
-    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli config:set REACT_APP_BACKEND_URI="https://todo-app-backend-prod.herokuapp.com/" -a todo-app-frontend-prod
+    - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli config:set REACT_APP_BACKEND_URI="https://todo-app-backend-prod.herokuapp.com" -a todo-app-frontend-prod
     - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY wingrunr21/alpine-heroku-cli container:release web -a $HEROKU_APP_NAME-prod
