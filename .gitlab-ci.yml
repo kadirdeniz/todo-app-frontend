@@ -82,8 +82,8 @@ stages:
 acceptance test:
   stage: can_i_deploy
   image: cypress/browsers:node12.14.1-chrome85-ff81
-  needs:
-    - deploy to test
+  # needs:
+  #   - deploy to test
   script:
     - echo $TEST_ENV_VARIABLES | base64 --decode > .env
     # install dependencies
