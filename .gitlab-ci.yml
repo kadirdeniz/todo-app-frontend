@@ -64,7 +64,7 @@ deploy to test:
 can_i_deploy:
   stage: can_i_deploy
   needs:
-    - deploy2test
+    - deploy to test
   image:
     name: pactfoundation/pact-cli:latest
     entrypoint: [ "" ]
@@ -83,7 +83,7 @@ acceptance test:
   stage: can_i_deploy
   image: node:16
   needs:
-    - deploy2test
+    - deploy to test
   script:
     - npm -v
     - npm install
