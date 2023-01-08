@@ -1,5 +1,8 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps";
 
+import * as dotenv from "dotenv";
+dotenv.config();
+
 const baseUrL = process.env.BASE_URL || "http://localhost:3000";
 
 Given("Empty ToDo list", () => {
